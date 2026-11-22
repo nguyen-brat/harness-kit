@@ -1,24 +1,32 @@
 # Stop hook protocol
 
-Claude Code runs a `Stop` hook whenever the coordinator tries to end its turn; exit code 2 sends it back to work with the hook's stderr
-as the reason (Claude Code best practices, "Enforce the check with a Stop hook"). Use it so a long build cannot end after one component.
+Claude Code runs a `Stop` hook whenever the coordinator tries to end its turn. Exit code 2 sends the coordinator back to work,
+with the hook's stderr as the reason. Codex has a `Stop` hook event too, but check how it handles the exit code on your version
+before you rely on it. Use the hook so that a long build cannot end after one component.
 
-Setting (project `.claude/settings.local.json`; absolute path to the copy of the script in the build folder):
+Setting for Claude Code, in the project's `.claude/settings.local.json`. Use the absolute path to the copy of the script in the
+build folder:
 ```json
 { "hooks": { "Stop": [ { "hooks": [ { "type": "command", "command": "node <abs-path>/<build>/stop-check.mjs" } ] } ] } }
 ```
 
-Files in the build folder:
-- `ACTIVE`: the build is running. Create it only after `requirements.json` has its items (incl. the FIN.* finish items). Delete it, and
-  the hook entry, when the build is finished.
-- `WAITING`: one line per running background agent (`<agent id> <role> <component>`). The coordinator may end its turn while it has a
-  line, because a notification will come. Remove an agent's line when it returns; delete the file when it is empty. A line older than
-  `WAITING_MAX_HOURS` (default 3) counts as stale: the hook then blocks and asks you to check that agent, so a forgotten line cannot let
-  a build stall silently.
-- `PAUSED`: a question for the user (written inside). Create it before asking; remove it when they answer.
+## Files in the build folder
+- **`ACTIVE`:** the build is running.
+  - Create it only after `requirements.json` holds its items, including the FIN.* finish items.
+  - When the build is finished, delete it and remove the hook entry.
+- **`WAITING`:** one line per background agent that is running: `<UTC ISO time> <agent id> <role> <component>`.
+  - Add the line after the agent was spawned successfully. Remove it when the agent returns. Delete the file when it is empty.
+  - A line older than `WAITING_MAX_HOURS` (default 3) is stale.
+  - A line without a time is stale too. Rewrite it with the current time after checking that agent.
+- **`PAUSED`:** a question for the user, written inside. Create it before asking; remove it when they answer.
 
-The hook allows stopping when `ACTIVE` is absent, `PAUSED` exists, `WAITING` has a fresh line, or every non-deferred requirement passes.
-Otherwise it blocks with the open ids. A missing or unreadable `requirements.json` allows stopping with a warning (fail open). Per the
-Claude Code docs, after eight blocked stops in a row with no tool call between them Claude Code lets the turn end
-(`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP` changes the cap), so the hook is a guard against forgetting, not a cage: a real user decision goes
-through `PAUSED`. The hook also affects any other Claude session in the same project while `ACTIVE` exists.
+## Decision order
+1. `ACTIVE` is absent, or `PAUSED` exists: allow the stop.
+2. `requirements.json` is missing or unreadable: allow the stop and print a warning (fail open).
+3. Every non-deferred requirement has `passes === true`: allow the stop. Stale WAITING lines do not block a finished build.
+4. At least one WAITING line is fresh: allow the stop, because a notification will come.
+5. Otherwise, block. The message lists the open ids and any stale WAITING lines.
+
+After eight blocked stops in a row with no tool call between them, Claude Code lets the turn end anyway (the cap is set by
+`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`). So the hook is a guard against forgetting, not a cage. A real decision for the user goes
+through `PAUSED`.

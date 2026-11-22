@@ -52,7 +52,7 @@ it. The examples come from real harness work but are kept generic.
 - **Detect:**
   - net lines per commit over the instruction folders;
   - a size budget per file;
-  - duplicate-paragraph and unreferenced-file checks (the linter);
+  - duplicate-paragraph checks (the linter), and a load map to spot files that no entry point loads;
   - "which ideas close a failure we actually saw?"
 
 ## 5. Writing for the requester and the example

@@ -1,0 +1,17 @@
+{
+  "name": "harness-kit",
+  "owner": {
+    "name": "nguyen-brat",
+    "url": "https://github.com/nguyen-brat"
+  },
+  "plugins": [
+    {
+      "name": "harness-kit",
+      "source": "./",
+      "description": "Change procedure, run tracing, long-plan builds, reviewer agents and instruction-lint hooks for AI agent harnesses."
+    }
+  ],
+  "metadata": {
+    "description": "Tools and procedures for building and changing AI agent harnesses."
+  }
+}

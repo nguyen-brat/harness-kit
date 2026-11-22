@@ -1,0 +1,20 @@
+{
+  "name": "harness-kit",
+  "version": "1.0.0",
+  "description": "Build and change AI agent harnesses (roles, skills, prompts, hooks, orchestrator flow) without the fix-one-break-another spiral: a change procedure, run tracing, long-plan builds, an independent reviewer, and hooks that lint instruction edits.",
+  "keywords": [
+    "agents",
+    "harness",
+    "skills",
+    "hooks",
+    "prompt-engineering",
+    "review"
+  ],
+  "author": {
+    "name": "nguyen-brat",
+    "url": "https://github.com/nguyen-brat"
+  },
+  "homepage": "https://github.com/nguyen-brat/harness-kit",
+  "repository": "https://github.com/nguyen-brat/harness-kit",
+  "license": "MIT"
+}

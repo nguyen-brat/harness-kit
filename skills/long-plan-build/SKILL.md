@@ -38,18 +38,17 @@ Each step below closes one of these gaps.
 ## Procedure
 
 ### 0. Set up (once)
-1. Find the source of truth for the code, and the machine and OS where results count.
-   - If tests must run on another machine, sync through git: push a branch there and run the suite there. Never mirror a
-     working copy by deleting and copying files.
-   - Shipped code must be portable to every OS it targets.
-2. Make sure the code is under git, with a clean baseline commit.
-3. Run the whole suite once and record the baseline: count, failures and duration. You need it to tell new failures from old
+1. Make sure the code is under git, with a clean baseline commit. Everything below runs on this one machine: editing, tests, and
+   parallel tracks as git worktrees.
+   - Optional: if results only count on another machine (another OS, bigger hardware), keep building here. Run the suite
+     there by pushing the branch with git and pulling it on that machine. Never copy or mirror a working copy across machines.
+2. Run the whole suite once and record the baseline: count, failures and duration. You need it to tell new failures from old
    ones.
-4. Create a build folder outside the shipped code (called `<build>` here). Put in it:
+3. Create a build folder outside the shipped code (called `<build>` here). Put in it:
    - `requirements.json` and `progress.md`;
    - the briefs from `references/`, with the project facts filled in;
    - for a Node `node:test` project, `scripts/coverage.mjs` and `scripts/stop-check.mjs`. Other runners need an adapter.
-5. Write the requirement list (step 1) **before** you arm the Stop hook. Then install the hook as described in
+4. Write the requirement list (step 1) **before** you arm the Stop hook. Then install the hook as described in
    `references/hooks.md` and create `<build>/ACTIVE`.
    - The hook blocks you from ending a turn while any requirement is open, unless a fresh `<build>/WAITING` entry or
      `<build>/PAUSED` explains why.

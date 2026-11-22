@@ -1,12 +1,21 @@
 {
   "name": "harness-kit",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Build, review and trace changes to AI agent harnesses without the fix-one-break-another spiral.",
-  "author": { "name": "nguyen-brat", "url": "https://github.com/nguyen-brat" },
+  "author": {
+    "name": "nguyen-brat",
+    "url": "https://github.com/nguyen-brat"
+  },
   "homepage": "https://github.com/nguyen-brat/harness-kit",
   "repository": "https://github.com/nguyen-brat/harness-kit",
   "license": "MIT",
-  "keywords": ["agents", "harness", "skills", "hooks", "review"],
+  "keywords": [
+    "agents",
+    "harness",
+    "skills",
+    "hooks",
+    "review"
+  ],
   "skills": "./skills/",
   "hooks": "./hooks/hooks.json"
 }
